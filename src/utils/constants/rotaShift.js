@@ -1,0 +1,17 @@
+module.exports = {
+  TYPE_SHIFT: 1,
+  TYPE_AVAILABLE: 2,
+  TYPE_UNAVAILABLE: 3,
+  TYPE_ABSENCE: 4,
+  FILTER_NONE_ID: '00000000-00000000-00000000-00000000',
+  AVAILABILITY_VIEW: 'Availability',
+  UNAVAILABILITY_VIEW: 'Unavailability',
+  ABSENCE_VIEW: 'Absence',
+  SHIFT_EXISTING_SHIFT: 'Shift_Existing_Shift',
+  AVAILABLE_EXISTING_UNAVAILABLE: 'Available_Existing_Unavailable',
+  UNAVAILABLE_EXISTING_AVAILABLE: 'Unavailable_Existing_Available',
+  SHIFT_EXISTING_AVAILABLE: 'Shift_Existing_Available',
+  SHIFT_EXISTING_UNAVAILABLE: 'Shift_Existing_Unavailable',
+  AVAILABLE_EXISTING_SHIFT: 'Available_Existing_Shift',
+  UNAVAILABLE_EXISTING_SHIFT: 'Unavailable_Existing_Shift',
+};

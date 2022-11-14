@@ -1,0 +1,95 @@
+diff --git a/node_modules/react-native-calendars/src/agenda/index.js b/node_modules/react-native-calendars/src/agenda/index.js
+index 403e445..8b45b6a 100644
+--- a/node_modules/react-native-calendars/src/agenda/index.js
++++ b/node_modules/react-native-calendars/src/agenda/index.js
+@@ -103,6 +103,7 @@ export default class AgendaView extends Component {
+       firstResevationLoad: false,
+       selectedDay: parseDate(this.props.selected) || XDate(true),
+       topDay: parseDate(this.props.selected) || XDate(true),
++      openCalendar: false,
+     };
+ 
+     this.currentMonth = this.state.selectedDay.clone();
+@@ -136,6 +137,9 @@ export default class AgendaView extends Component {
+     this.setScrollPadPosition(this.initialScrollPadPosition(), false);
+     // delay rendering calendar in full height because otherwise it still flickers sometimes
+     setTimeout(() => this.setState({calendarIsReady: true}), 0);
++    
++  
++    
+   }
+ 
+   onLayout(event) {
+@@ -156,6 +160,22 @@ export default class AgendaView extends Component {
+       this.knob.setNativeProps({style: {opacity: 1}});
+     }
+ 
++    if(this.state.calendarScrollable){
++      this.setScrollPadPosition(this.initialScrollPadPosition(), false);
++      this.setState({
++        calendarScrollable: false,
++        openCalendar: false
++      });
++      if (this.props.onCalendarToggled) {
++        this.props.onCalendarToggled(false);
++      }
++      this.calendar.scrollToDay(this.state.selectedDay, this.calendarOffset() + 1, true);
++
++      this.headerState = 'idle';
++      return
++    }
++    
++
+     if (this.headerState === 'touched') {
+       this.setScrollPadPosition(0, true);
+       this.enableCalendarScrolling();
+@@ -219,11 +239,30 @@ export default class AgendaView extends Component {
+   componentWillReceiveProps(props) {
+     if (props.items) {
+       this.setState({
+-        firstResevationLoad: false
++        firstResevationLoad: false,   
+       });
+     } else {
+       this.loadReservations(props);
+     }
++
++    if(!props.openCalendar && !this.state.openCalendar){      
++      return;
++    }
++
++    if(props.openCalendar){
++      this.setState({
++        openCalendar: true,   
++      });
++      this.onTouchStart();
++      this.onTouchEnd();      
++    }else{
++      this.onTouchStart();
++      this.onTouchEnd();
++      this.setState({
++        openCalendar: false,   
++      });
++    }
++    
+   }
+ 
+   enableCalendarScrolling() {
+@@ -379,7 +418,7 @@ export default class AgendaView extends Component {
+       position: 'absolute',
+       width: 80,
+       height: KNOB_HEIGHT,
+-      top: scrollPadPosition,
++      top: !this.state.calendarScrollable ? scrollPadPosition: (this.initialScrollPadPosition() + HEADER_HEIGHT) - KNOB_HEIGHT,
+       left: (this.viewWidth - 80) / 2
+     };
+ 
+@@ -387,7 +426,7 @@ export default class AgendaView extends Component {
+ 
+     if (!this.props.hideKnob) {
+       const knobView = this.props.renderKnob ? this.props.renderKnob() : (<View style={this.styles.knob}/>);
+-      knob = this.state.calendarScrollable ? null : (
++      knob =  (
+         <View style={this.styles.knobContainer}>
+           <View ref={(c) => this.knob = c}>{knobView}</View>
+         </View>

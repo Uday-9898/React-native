@@ -1,0 +1,166 @@
+diff --git a/node_modules/react-native-events-calendar/src/Constants.js b/node_modules/react-native-events-calendar/src/Constants.js
+new file mode 100644
+index 0000000..5af94bc
+--- /dev/null
++++ b/node_modules/react-native-events-calendar/src/Constants.js
+@@ -0,0 +1 @@
++export const MyCalendarHeight = 7200;
+\ No newline at end of file
+diff --git a/node_modules/react-native-events-calendar/src/DayView.js b/node_modules/react-native-events-calendar/src/DayView.js
+index 23fa1ee..c47ce3c 100644
+--- a/node_modules/react-native-events-calendar/src/DayView.js
++++ b/node_modules/react-native-events-calendar/src/DayView.js
+@@ -8,16 +8,21 @@ import {
+ import populateEvents from './Packer'
+ import React from 'react'
+ import moment from 'moment'
++import {MyCalendarHeight} from './Constants'
+ import _ from 'lodash'
+ 
+ const LEFT_MARGIN = 60 - 1
+ // const RIGHT_MARGIN = 10
+-const CALENDER_HEIGHT = 2400
++const CALENDER_HEIGHT = MyCalendarHeight
+ // const EVENT_TITLE_HEIGHT = 15
+ const TEXT_LINE_HEIGHT = 17
+ // const MIN_EVENT_TITLE_WIDTH = 20
+ // const EVENT_PADDING_LEFT = 4
+ 
++const OFFSET = CALENDER_HEIGHT / 24
++const TIME_NOW_HOUR = moment().hour()
++const TIME_NOW_MIN = moment().minutes()
++
+ function range (from, to) {
+   return Array.from(Array(to), (_, i) => from + i)
+ }
+@@ -27,8 +32,8 @@ export default class DayView extends React.PureComponent {
+     super(props)
+     const width = props.width - LEFT_MARGIN
+     const packedEvents = populateEvents(props.events, width)
+-    let initPosition = _.min(_.map(packedEvents, 'top')) - CALENDER_HEIGHT / 24
+-    initPosition = initPosition < 0 ? 0 : initPosition
++    let initPosition = OFFSET * TIME_NOW_HOUR + OFFSET * TIME_NOW_MIN / 60
++    initPosition = initPosition < 0 ? 0 : initPosition - 20
+     this.state = {
+       _scrollY: initPosition,
+       packedEvents
+@@ -40,6 +45,7 @@ export default class DayView extends React.PureComponent {
+     this.setState({
+       packedEvents: populateEvents(nextProps.events, width)
+     })
++    this.scrollToFirst()
+   }
+ 
+   componentDidMount () {
+@@ -47,9 +53,15 @@ export default class DayView extends React.PureComponent {
+   }
+ 
+   scrollToFirst () {
++    const offset = CALENDER_HEIGHT / 24
++    const timeNowHour = moment().hour()
++    const timeNowMin = moment().minutes()
++
++    const scroll_to_y = (offset * timeNowHour + offset * timeNowMin / 60) - 100
++
+     setTimeout(() => {
+       if (this.state && this.state._scrollY && this._scrollView) {
+-        this._scrollView.scrollTo({ x: 0, y: this.state._scrollY, animated: true })
++        this._scrollView.scrollTo({ x: 0, y: scroll_to_y, animated: true })
+       }
+     }, 1)
+   }
+@@ -99,8 +111,16 @@ export default class DayView extends React.PureComponent {
+           />
+         ),
+         <View
+-          key={`lineHalf${i}`}
+-          style={[styles.line, { top: offset * (i + 0.5), width: width - 20 }]}
++          key={`lineHalf${i + 1}`}
++          style={[styles.line, { top: offset * (i + 0.25), width: width - 20}]}
++        />,
++        <View
++          key={`lineHalf${i + 2}`}
++          style={[styles.line, { top: offset * (i + 0.5), width: width - 20}]}
++        />,
++        <View
++          key={`lineHalf${i + 3}`}
++          style={[styles.line, { top: offset * (i + 0.75), width: width - 20}]}
+         />
+       ]
+     })
+diff --git a/node_modules/react-native-events-calendar/src/Packer.js b/node_modules/react-native-events-calendar/src/Packer.js
+index 3e3e77a..5b6f85f 100644
+--- a/node_modules/react-native-events-calendar/src/Packer.js
++++ b/node_modules/react-native-events-calendar/src/Packer.js
+@@ -1,6 +1,7 @@
+ // @flow
+ import moment from 'moment'
+-const CALENDER_HEIGHT = 2400
++import {MyCalendarHeight} from './Constants'
++const CALENDER_HEIGHT = MyCalendarHeight
+ const offset = CALENDER_HEIGHT / 24
+ 
+ function buildEvent (column, left, width) {
+@@ -43,8 +44,10 @@ function pack (columns, width, calculatedEvents) {
+     var col = columns[i]
+     for (var j = 0; j < col.length; j++) {
+       var colSpan = expand(col[j], i, columns)
+-      var L = i / colLength * width
+-      var W = width * colSpan / colLength - 10
++      //added 35 for left 20 for width in left and 15 for separate event margin
++      var L =  columns[i][j].isVisit ?   35 : 0
++      //added width auto, to be able to manipulate the width from front 
++      var W = 'auto'
+ 
+       calculatedEvents.push(buildEvent(col[j], L, W))
+     }
+diff --git a/node_modules/react-native-events-calendar/src/style.js b/node_modules/react-native-events-calendar/src/style.js
+index acbdcac..8b07281 100644
+--- a/node_modules/react-native-events-calendar/src/style.js
++++ b/node_modules/react-native-events-calendar/src/style.js
+@@ -1,7 +1,8 @@
+ // @flow
+ import { StyleSheet } from 'react-native'
++import {MyCalendarHeight} from './Constants'
+ 
+-const calendarHeight = 2400
++const calendarHeight = MyCalendarHeight
+ // const eventPaddingLeft = 4
+ const leftMargin = 50 - 1
+ 
+@@ -16,7 +17,8 @@ export default function styleConstructor (
+     },
+     contentStyle: {
+       backgroundColor: '#ffff',
+-      height: calendarHeight + 10
++      height: calendarHeight + 10,
++      ...theme.contentStyle
+     },
+     header: {
+       paddingHorizontal: 30,
+@@ -31,12 +33,14 @@ export default function styleConstructor (
+       ...theme.header
+     },
+     headerText: {
+-      fontSize: 16
++      fontSize: 16,
++      ...theme.headerText
+     },
+     arrow: {
+       width: 15,
+       height: 15,
+-      resizeMode: 'contain'
++      resizeMode: 'contain',
++      ...theme.arrow
+     },
+     event: {
+       position: 'absolute',
+@@ -87,7 +91,7 @@ export default function styleConstructor (
+       position: 'absolute',
+       left: leftMargin,
+       backgroundColor: 'red',
+-      ...theme.line
++      ...theme.lineNow
+     },
+     timeLabel: {
+       position: 'absolute',

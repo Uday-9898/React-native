@@ -1,0 +1,12 @@
+build:
+  docker:
+    web: ./backend/Dockerfile
+  config:
+    DEBUG_COLLECTSTATIC: 1
+    SECRET_KEY: build
+    NODE_ENV: production
+    PORT: 3000
+release:
+  image: web
+  command:
+    - python3 manage.py migrate

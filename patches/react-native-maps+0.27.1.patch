@@ -1,0 +1,52 @@
+diff --git a/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapMarker.m b/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapMarker.m
+index cf69ac7..14e28ac 100644
+--- a/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapMarker.m
++++ b/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapMarker.m
+@@ -9,7 +9,7 @@
+ 
+ #import "AIRGoogleMapMarker.h"
+ #import <GoogleMaps/GoogleMaps.h>
+-#import <React/RCTImageLoaderProtocol.h>
++#import <React/RCTImageLoader.h>
+ #import <React/RCTUtils.h>
+ #import "AIRGMSMarker.h"
+ #import "AIRGoogleMapCallout.h"
+diff --git a/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapOverlay.m b/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapOverlay.m
+index a474c96..ceac420 100644
+--- a/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapOverlay.m
++++ b/node_modules/react-native-maps/lib/ios/AirGoogleMaps/AIRGoogleMapOverlay.m
+@@ -8,7 +8,7 @@
+ #import "AIRGoogleMapOverlay.h"
+ 
+ #import <React/RCTEventDispatcher.h>
+-#import <React/RCTImageLoaderProtocol.h>
++#import <React/RCTImageLoader.h>
+ #import <React/RCTUtils.h>
+ #import <React/UIView+React.h>
+ 
+diff --git a/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapMarker.m b/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapMarker.m
+index 65098aa..ce2474e 100644
+--- a/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapMarker.m
++++ b/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapMarker.m
+@@ -11,7 +11,7 @@
+ 
+ #import <React/RCTBridge.h>
+ #import <React/RCTEventDispatcher.h>
+-#import <React/RCTImageLoaderProtocol.h>
++#import <React/RCTImageLoader.h>
+ #import <React/RCTUtils.h>
+ #import <React/UIView+React.h>
+ 
+diff --git a/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapOverlay.m b/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapOverlay.m
+index e99411d..a3c38a8 100644
+--- a/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapOverlay.m
++++ b/node_modules/react-native-maps/lib/ios/AirMaps/AIRMapOverlay.m
+@@ -2,7 +2,7 @@
+ 
+ #import <React/RCTBridge.h>
+ #import <React/RCTEventDispatcher.h>
+-#import <React/RCTImageLoaderProtocol.h>
++#import <React/RCTImageLoader.h>
+ #import <React/RCTUtils.h>
+ #import <React/UIView+React.h>
+ 
